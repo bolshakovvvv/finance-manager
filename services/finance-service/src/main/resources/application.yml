@@ -1,0 +1,20 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finance_db
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  flyway:
+    enabled: true
+
+security:
+  jwt:
+    secret: "hJvmtWq2P8z2kXt5k1Bz9sZ3H5rD8N5QzV9pC8E7kTw="
+    expiration: 86400000

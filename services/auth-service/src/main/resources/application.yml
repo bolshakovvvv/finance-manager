@@ -1,0 +1,31 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: auth-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finance_db  # БД (позже заменим на Docker)
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update  # Пока update, позже сменим на validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+security:
+  jwt:
+    secret: "hJvmtWq2P8z2kXt5k1Bz9sZ3H5rD8N5QzV9pC8E7kTw="  # Секретный ключ (Base64)
+    expiration: 86400000  # Время жизни токена (1 час)
