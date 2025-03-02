@@ -12,5 +12,5 @@ public class CreateAccountRequest {
     private String name;
 
     @NotNull
-    private BigDecimal initialBalance;
+    private double initialBalance;
 }

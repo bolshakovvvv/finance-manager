@@ -25,7 +25,7 @@ public class Transaction {
     private Account account;  // Связь с аккаунтом
 
     @Column(nullable = false)
-    private BigDecimal amount;  // Сумма транзакции
+    private double amount;  // Сумма транзакции
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

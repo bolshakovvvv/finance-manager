@@ -18,7 +18,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
 
-    public Account createAccount(String name, UUID userId, BigDecimal initialBalance) {
+    public Account createAccount(String name, UUID userId, double initialBalance) {
         if (accountRepository.findByNameAndUserId(name, userId).isPresent()) {
             throw new RuntimeException("Счёт с таким именем уже существует");
         }
@@ -48,11 +48,11 @@ public class AccountService {
     }
 
     @Transactional
-    public Account updateBalance(UUID accountId, BigDecimal amount) {
+    public Account updateBalance(UUID accountId, double amount) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Счёт не найден"));
 
-        account.setBalance(account.getBalance().add(amount));
+        account.setBalance(account.getBalance() + amount);
         return accountRepository.save(account);
     }
 }

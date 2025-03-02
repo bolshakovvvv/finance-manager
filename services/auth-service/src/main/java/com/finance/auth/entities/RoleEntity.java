@@ -27,7 +27,6 @@ public class RoleEntity implements GrantedAuthority {
     @ManyToMany(mappedBy = "roles")
     private Set<UserEntity> users;
 
-
     @Override
     public String getAuthority() {
         return name.name();

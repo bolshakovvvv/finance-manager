@@ -11,6 +11,6 @@ import java.math.BigDecimal;
 public class BalanceUpdateRequest {
 
     @NotNull
-    private BigDecimal amount;
+    private double amount;
 
 }

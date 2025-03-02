@@ -6,21 +6,20 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
+
 import java.util.UUID;
 
 @Data
 public class TransactionRequest {
 
     @NotNull
-    private UUID accountId;  // ID счёта
+    private UUID accountId;
 
     @NotNull
-    private BigDecimal amount;  // Сумма транзакции
+    private double amount;
 
     @NotNull
-    private TransactionType type;  // Тип (INCOME / EXPENSE)
+    private TransactionType type;
 
-    private UUID categoryId;  // (Необязательно) ID категории
-
+    private String categoryName;
 }

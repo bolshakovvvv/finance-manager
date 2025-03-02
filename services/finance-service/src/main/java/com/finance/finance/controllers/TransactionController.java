@@ -26,7 +26,7 @@ public class TransactionController {
                 request.getAccountId(),
                 request.getAmount(),
                 request.getType(),
-                request.getCategoryId()
+                request.getCategoryName()
         );
         return ResponseEntity.ok(transaction);
     }

@@ -32,14 +32,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        // Извлекаем заголовок Authorization
         String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
-            return; // Пропускаем дальше, если токена нет
+            return;
         }
 
-        String token = authHeader.substring(7); // Убираем "Bearer "
+        String token = authHeader.substring(7);
         String username;
 
         try {

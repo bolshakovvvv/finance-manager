@@ -14,7 +14,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
-      ddl-auto: update  # Пока update, позже сменим на validate
+      ddl-auto: update
     properties:
       hibernate:
         format_sql: true
@@ -27,5 +27,5 @@ spring:
 
 security:
   jwt:
-    secret: "hJvmtWq2P8z2kXt5k1Bz9sZ3H5rD8N5QzV9pC8E7kTw="  # Секретный ключ (Base64)
-    expiration: 86400000  # Время жизни токена (1 час)
+    secret: "hJvmtWq2P8z2kXt5k1Bz9sZ3H5rD8N5QzV9pC8E7kTw="
+    expiration: 86400000

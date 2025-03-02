@@ -6,10 +6,12 @@ import io.jsonwebtoken.security.Keys;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
@@ -22,14 +24,20 @@ public class JwtService {
     @Value("${security.jwt.expiration}")
     private long expirationTime;
 
-    public String generateToken(String username) {
+    public String generateToken(UserDetails userDetails, UUID userId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId.toString()); // Добавляем userId
+
         return Jwts.builder()
-                .setSubject(username)
-                .setIssuedAt(new Date())
+                .setClaims(claims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
+
+
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -59,9 +67,13 @@ public class JwtService {
 
     public String refreshToken(String oldToken) {
         String username = extractUsername(oldToken);
+        String userId = extractClaim(oldToken, claims -> claims.get("userId", String.class));
+
         if (!isTokenValid(oldToken, username)) {
             throw new RuntimeException("Недействительный токен");
         }
-        return generateToken(username);
+
+        return generateToken(new User(username, "", new ArrayList<>()), UUID.fromString(userId));
     }
+
 }

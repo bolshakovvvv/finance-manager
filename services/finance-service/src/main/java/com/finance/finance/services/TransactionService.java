@@ -9,7 +9,6 @@ import com.finance.finance.repositories.CategoryRepository;
 import com.finance.finance.repositories.TransactionRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,29 +26,27 @@ public class TransactionService {
     private final CategoryRepository categoryRepository;
 
     @Transactional
-    public Transaction createTransaction(UUID accountId, BigDecimal amount, TransactionType type, UUID categoryId) {
+    public Transaction createTransaction(UUID accountId, double amount, TransactionType type, String categoryName) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Счёт не найден"));
 
-        // Если указан categoryId, ищем категорию
-        Category category = null;
-        if (categoryId != null) {
-            category = categoryRepository.findById(categoryId)
-                    .orElseThrow(() -> new EntityNotFoundException("Категория не найдена"));
-        }
+        // Найти категорию по имени или создать новую
+        Category category = categoryRepository.findByName(categoryName)
+                .orElseGet(() -> createNewCategory(categoryName));
 
         // Корректируем баланс счёта
+        double transactionAmount = Math.abs(amount);
         if (type == TransactionType.EXPENSE) {
-            amount = amount.negate();  // Расходы уменьшают баланс
+            account.setBalance(account.getBalance() - transactionAmount);
+        } else {
+            account.setBalance(account.getBalance() + transactionAmount);
         }
-
-        account.setBalance(account.getBalance().add(amount));
         accountRepository.save(account);
 
         // Создаём и сохраняем транзакцию
         Transaction transaction = Transaction.builder()
                 .account(account)
-                .amount(amount.abs())  // Сохраняем только положительное значение
+                .amount(transactionAmount)
                 .type(type)
                 .category(category)
                 .timestamp(LocalDateTime.now())
@@ -59,14 +56,36 @@ public class TransactionService {
     }
 
     /**
-     * Получить все транзакции счёта
+     * Создать новую категорию и сохранить в БД.
+     */
+    private Category createNewCategory(String name) {
+        Category category = new Category();
+        category.setName(name);
+        return categoryRepository.save(category);
+    }
+
+
+    /**
+     * Получить или создать категорию "Без категории", если она отсутствует.
+     */
+    private Category getOrCreateDefaultCategory() {
+        return categoryRepository.findByName("Без категории")
+                .orElseGet(() -> {
+                    Category defaultCategory = new Category();
+                    defaultCategory.setName("Без категории");
+                    return categoryRepository.save(defaultCategory);
+                });
+    }
+
+    /**
+     * Получить все транзакции счёта.
      */
     public List<Transaction> getTransactions(UUID accountId) {
         return transactionRepository.findByAccountId(accountId);
     }
 
     /**
-     * Получить все транзакции по типу (доходы/расходы)
+     * Получить все транзакции по типу (доходы/расходы).
      */
     public List<Transaction> getTransactionsByType(UUID accountId, TransactionType type) {
         return transactionRepository.findByAccountIdAndType(accountId, type);

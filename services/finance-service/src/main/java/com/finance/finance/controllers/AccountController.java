@@ -3,16 +3,13 @@ package com.finance.finance.controllers;
 import com.finance.finance.controllers.dto.BalanceUpdateRequest;
 import com.finance.finance.controllers.dto.CreateAccountRequest;
 import com.finance.finance.entities.Account;
+import com.finance.finance.security.JwtService;
 import com.finance.finance.services.AccountService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +20,7 @@ import java.util.UUID;
 public class AccountController {
 
     private final AccountService accountService;
+    private final JwtService jwtService;
 
     @GetMapping
     public ResponseEntity<List<Account>> getAccounts(Principal principal) {
@@ -31,11 +29,17 @@ public class AccountController {
     }
 
     @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody @Valid CreateAccountRequest request, Principal principal) {
-        UUID userId = UUID.fromString(principal.getName());
+    public ResponseEntity<Account> createAccount(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody @Valid CreateAccountRequest request
+    ) {
+        String token = authHeader.replace("Bearer ", "");
+        UUID userId = jwtService.extractUserId(token);
+
         Account account = accountService.createAccount(request.getName(), userId, request.getInitialBalance());
         return ResponseEntity.ok(account);
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable UUID id, Principal principal) {

@@ -17,13 +17,13 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;  // Уникальный идентификатор
+    private UUID id;
 
     @Column(nullable = false, unique = true)
     private String name;  // Название счета (например, "Карта Сбер", "Наличные")
 
     @Column(nullable = false)
-    private BigDecimal balance;  // Текущий баланс
+    private double balance;  // Текущий баланс
 
     @Column(nullable = false)
     private UUID userId;  // ID владельца (из auth-service)

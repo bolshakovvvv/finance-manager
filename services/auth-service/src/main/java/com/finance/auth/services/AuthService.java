@@ -11,11 +11,14 @@ import com.finance.auth.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +49,9 @@ public class AuthService {
         user.setRoles(Collections.singleton(role));
         userRepository.save(user);
 
-        return jwtService.generateToken(user.getUsername());
+        UUID userId = user.getId();
+        UserDetails userDetails = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return jwtService.generateToken(userDetails, userId);
     }
 
     public String login(LoginRequest request) {
@@ -57,6 +62,8 @@ public class AuthService {
         UserEntity user = userRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Пользователь не найден!"));
 
-        return jwtService.generateToken(user.getUsername());
+        UUID userId = user.getId();
+        UserDetails userDetails = new User(user.getUsername(), user.getPassword(), new ArrayList<>());
+        return jwtService.generateToken(userDetails, userId);
     }
 }
