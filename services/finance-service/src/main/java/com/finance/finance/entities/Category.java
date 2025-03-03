@@ -15,5 +15,5 @@ public class Category {
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    private String name;  // Название категории (еда, зарплата, развлечения и т.д.)
+    private String name;
 }

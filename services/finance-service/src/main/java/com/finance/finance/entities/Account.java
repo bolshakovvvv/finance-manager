@@ -20,12 +20,12 @@ public class Account {
     private UUID id;
 
     @Column(nullable = false, unique = true)
-    private String name;  // Название счета (например, "Карта Сбер", "Наличные")
+    private String name;
 
     @Column(nullable = false)
-    private double balance;  // Текущий баланс
+    private double balance;
 
     @Column(nullable = false)
-    private UUID userId;  // ID владельца (из auth-service)
+    private UUID userId;
 
 }

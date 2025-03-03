@@ -30,7 +30,6 @@ public class TransactionService {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Счёт не найден"));
 
-        // Найти категорию по имени или создать новую
         Category category = categoryRepository.findByName(categoryName)
                 .orElseGet(() -> createNewCategory(categoryName));
 
@@ -43,7 +42,6 @@ public class TransactionService {
         }
         accountRepository.save(account);
 
-        // Создаём и сохраняем транзакцию
         Transaction transaction = Transaction.builder()
                 .account(account)
                 .amount(transactionAmount)
@@ -55,9 +53,7 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    /**
-     * Создать новую категорию и сохранить в БД.
-     */
+
     private Category createNewCategory(String name) {
         Category category = new Category();
         category.setName(name);
@@ -65,9 +61,7 @@ public class TransactionService {
     }
 
 
-    /**
-     * Получить или создать категорию "Без категории", если она отсутствует.
-     */
+
     private Category getOrCreateDefaultCategory() {
         return categoryRepository.findByName("Без категории")
                 .orElseGet(() -> {
@@ -77,16 +71,12 @@ public class TransactionService {
                 });
     }
 
-    /**
-     * Получить все транзакции счёта.
-     */
+
     public List<Transaction> getTransactions(UUID accountId) {
         return transactionRepository.findByAccountId(accountId);
     }
 
-    /**
-     * Получить все транзакции по типу (доходы/расходы).
-     */
+
     public List<Transaction> getTransactionsByType(UUID accountId, TransactionType type) {
         return transactionRepository.findByAccountIdAndType(accountId, type);
     }

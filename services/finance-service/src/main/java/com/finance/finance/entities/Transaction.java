@@ -22,19 +22,19 @@ public class Transaction {
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
-    private Account account;  // Связь с аккаунтом
+    private Account account;
 
     @Column(nullable = false)
-    private double amount;  // Сумма транзакции
+    private double amount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType type;  // Тип транзакции (INCOME / EXPENSE)
+    private TransactionType type;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
-    private Category category;  // Категория расхода/дохода
+    private Category category;
 
     @Column(nullable = false)
-    private LocalDateTime timestamp;  // Дата и время
+    private LocalDateTime timestamp;
 }
